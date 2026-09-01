@@ -9,3 +9,6 @@ saida/
 *.db
 *.sqlite
 *.log
+
+#instrução de implementação
+CASE_TECNICO.md
