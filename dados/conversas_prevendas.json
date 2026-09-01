@@ -1,0 +1,444 @@
+[
+  {
+    "conversa_id": "CV001",
+    "campanha_id": "cmp_004",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Oi, vi voces no Google. Peguei as chaves do apto semana passada e queria orcar a cozinha e os dois quartos"
+      },
+      {
+        "de": "atendente",
+        "texto": "Que otimo! Voce ja tem a planta do apartamento?"
+      },
+      {
+        "de": "lead",
+        "texto": "Tenho sim, o arquiteto ja mandou. Sao 68m2"
+      },
+      {
+        "de": "atendente",
+        "texto": "Perfeito. Voce tem uma ideia de investimento para os ambientes?"
+      },
+      {
+        "de": "lead",
+        "texto": "A gente separou uns 60 mil pros planejados. Queria entregar ate dezembro se dar"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consigo agendar uma visita ao showroom essa semana, pode ser?"
+      },
+      {
+        "de": "lead",
+        "texto": "Pode ser quinta a tarde"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV002",
+    "campanha_id": "cmp_001",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "quanto custa uma cozinha planejada"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Depende do tamanho e dos acabamentos. Voce ja tem a medida do espaco?"
+      },
+      {
+        "de": "lead",
+        "texto": "nao, so queria saber o preco medio"
+      },
+      {
+        "de": "atendente",
+        "texto": "Nossos projetos de cozinha comecam em torno de 18 mil. Voce esta reformando ou mudando?"
+      },
+      {
+        "de": "lead",
+        "texto": "nem um nem outro, to so pesquisando pra daqui uns 2 anos"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV003",
+    "campanha_id": "cmp_006",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Boa tarde, comprei um apartamento na planta, entrega em marco. Ja da pra comecar o projeto?"
+      },
+      {
+        "de": "atendente",
+        "texto": "Boa tarde! Da sim, o ideal e comecar uns 4 meses antes da entrega"
+      },
+      {
+        "de": "lead",
+        "texto": "Legal. Sao 3 dormitorios, quero fazer tudo. Cozinha, quartos, area de servico e sala"
+      },
+      {
+        "de": "atendente",
+        "texto": "Otimo. Voce tem a planta em maos?"
+      },
+      {
+        "de": "lead",
+        "texto": "Tenho o PDF da construtora"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consegue me passar a faixa de investimento que voces planejaram?"
+      },
+      {
+        "de": "lead",
+        "texto": "A gente ainda nao definiu, mas o apto foi 850 mil entao imagino que da pra investir bem nos moveis"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV004",
+    "campanha_id": "cmp_005",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "voces fazem conserto de armario? o meu ta com a porta solta"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Nos trabalhamos com projetos novos de moveis planejados, nao fazemos manutencao"
+      },
+      {
+        "de": "lead",
+        "texto": "ah ta, obrigado"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV005",
+    "campanha_id": "cmp_002",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Oi, queria um orcamento de guarda roupa"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Para qual ambiente?"
+      },
+      {
+        "de": "lead",
+        "texto": "quarto do casal, 3 metros mais ou menos"
+      },
+      {
+        "de": "atendente",
+        "texto": "Voce esta reformando o quarto ou e um imovel novo?"
+      },
+      {
+        "de": "lead",
+        "texto": "reformando, moro aqui ha 8 anos e quero trocar o movel"
+      },
+      {
+        "de": "atendente",
+        "texto": "Entendi. Tem prazo em mente?"
+      },
+      {
+        "de": "lead",
+        "texto": "sem pressa, quando der certo"
+      },
+      {
+        "de": "atendente",
+        "texto": "E o investimento?"
+      },
+      {
+        "de": "lead",
+        "texto": "ate uns 8 mil"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV006",
+    "campanha_id": "cmp_003",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Voltei aqui, vi voces de novo no instagram"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Que bom te ver por aqui. Voce chegou a falar com a gente antes?"
+      },
+      {
+        "de": "lead",
+        "texto": "faz uns 3 meses, mas na epoca a obra tava atrasada. Agora ja liberou"
+      },
+      {
+        "de": "atendente",
+        "texto": "Perfeito. O escopo continua o mesmo?"
+      },
+      {
+        "de": "lead",
+        "texto": "sim, cozinha e lavanderia. E agora quero incluir o home office tambem"
+      },
+      {
+        "de": "atendente",
+        "texto": "Otimo. Quando conseguimos fazer a medicao?"
+      },
+      {
+        "de": "lead",
+        "texto": "semana que vem qualquer dia, to em casa"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV007",
+    "campanha_id": "cmp_001",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "quero um orcamento"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Claro. Para qual ambiente?"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV008",
+    "campanha_id": "cmp_005",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Bom dia. Estou fazendo cotacao com 4 empresas. Voces conseguem cobrir o orcamento da concorrencia?"
+      },
+      {
+        "de": "atendente",
+        "texto": "Bom dia! Trabalhamos com projeto sob medida, entao o valor depende do que for desenhado. Voce ja tem um orcamento em maos?"
+      },
+      {
+        "de": "lead",
+        "texto": "tenho um de 31 mil pra cozinha e sala"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consigo montar uma proposta. Quando voce precisa decidir?"
+      },
+      {
+        "de": "lead",
+        "texto": "ate o fim do mes, quem der o melhor preco leva"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV009",
+    "campanha_id": "cmp_004",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Ola, sou arquiteta e tenho um cliente que precisa de planejados. Voces trabalham com parceria?"
+      },
+      {
+        "de": "atendente",
+        "texto": "Ola! Trabalhamos sim. Como funciona o seu projeto?"
+      },
+      {
+        "de": "lead",
+        "texto": "e uma casa de 220m2 em condominio. Cozinha, 4 quartos, closet e escritorio"
+      },
+      {
+        "de": "atendente",
+        "texto": "Projeto grande. Ja tem prazo definido?"
+      },
+      {
+        "de": "lead",
+        "texto": "a obra termina em novembro, os moveis entram depois"
+      },
+      {
+        "de": "atendente",
+        "texto": "Perfeito, e o cliente ja tem verba definida para os planejados?"
+      },
+      {
+        "de": "lead",
+        "texto": "sim, 180 mil"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV010",
+    "campanha_id": "cmp_002",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "oi"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Tudo bem? Em que posso ajudar?"
+      },
+      {
+        "de": "lead",
+        "texto": "vi um anuncio"
+      },
+      {
+        "de": "atendente",
+        "texto": "Que bom! Voce esta buscando moveis planejados para qual ambiente?"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV011",
+    "campanha_id": "cmp_006",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Boa noite! Alugamos um apartamento e queremos montar so a cozinha. Voces atendem imovel alugado?"
+      },
+      {
+        "de": "atendente",
+        "texto": "Boa noite! Atendemos sim, desde que o proprietario autorize a instalacao"
+      },
+      {
+        "de": "lead",
+        "texto": "ele autoriza. Sao 6m2 de cozinha, bem pequena"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consegue me dizer a faixa de investimento?"
+      },
+      {
+        "de": "lead",
+        "texto": "uns 12 a 15 mil"
+      },
+      {
+        "de": "atendente",
+        "texto": "Da para trabalhar. Quando podemos medir?"
+      },
+      {
+        "de": "lead",
+        "texto": "esse sabado de manha eu to livre"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV012",
+    "campanha_id": "cmp_001",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "MUITO CARO"
+      },
+      {
+        "de": "atendente",
+        "texto": "Oi! Voce chegou a receber algum orcamento nosso?"
+      },
+      {
+        "de": "lead",
+        "texto": "nao, mas amiga minha fez ai e pagou uma fortuna"
+      },
+      {
+        "de": "atendente",
+        "texto": "Nossos projetos variam bastante conforme o escopo. Posso te mostrar opcoes?"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV013",
+    "campanha_id": "cmp_003",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Oi! Voces entregam em quanto tempo depois de fechar?"
+      },
+      {
+        "de": "atendente",
+        "texto": "Em media 45 dias apos a aprovacao do projeto final"
+      },
+      {
+        "de": "lead",
+        "texto": "preciso pra 30 dias, meu casamento e em setembro e a gente muda antes"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consigo verificar prioridade. Quais ambientes?"
+      },
+      {
+        "de": "lead",
+        "texto": "cozinha e quarto. Ja temos 45 mil separados pra isso"
+      },
+      {
+        "de": "atendente",
+        "texto": "Perfeito, vou ver o prazo com producao e te confirmo hoje"
+      },
+      {
+        "de": "lead",
+        "texto": "por favor, se der eu fecho essa semana"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV014",
+    "campanha_id": "cmp_005",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "voces tem loja fisica onde"
+      },
+      {
+        "de": "atendente",
+        "texto": "Temos showroom na zona sul. Quer agendar uma visita?"
+      },
+      {
+        "de": "lead",
+        "texto": "e muito longe de mim, moro em Guarulhos"
+      },
+      {
+        "de": "atendente",
+        "texto": "Conseguimos fazer o atendimento inicial online e a medicao na sua casa"
+      },
+      {
+        "de": "lead",
+        "texto": "ah nao, prefiro ver pessoalmente. Vou procurar mais perto"
+      }
+    ]
+  },
+  {
+    "conversa_id": "CV015",
+    "campanha_id": "cmp_006",
+    "mensagens": [
+      {
+        "de": "lead",
+        "texto": "Bom dia, comprei 3 apartamentos para investimento e quero padronizar os planejados dos tres"
+      },
+      {
+        "de": "atendente",
+        "texto": "Bom dia! Que projeto interessante. Os tres tem a mesma planta?"
+      },
+      {
+        "de": "lead",
+        "texto": "dois iguais e um menor. Todos de 2 dormitorios"
+      },
+      {
+        "de": "atendente",
+        "texto": "Entendi. Voce quer os tres agora ou faseado?"
+      },
+      {
+        "de": "lead",
+        "texto": "os tres agora se o preco fizer sentido. Entrega das chaves foi mes passado"
+      },
+      {
+        "de": "atendente",
+        "texto": "Voce tem uma faixa de investimento total?"
+      },
+      {
+        "de": "lead",
+        "texto": "150 mil pros tres, mas negocio se o projeto for bom"
+      },
+      {
+        "de": "atendente",
+        "texto": "Consigo montar. Quando podemos conversar por video?"
+      },
+      {
+        "de": "lead",
+        "texto": "amanha as 10"
+      }
+    ]
+  }
+]
