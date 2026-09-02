@@ -1,4 +1,4 @@
-# Case Técnico | Cômoda
+# Case Técnico | Cômodo
 
 Repositório com as três entregas do case: ingestão de dados via API, análise SQL
 sobre um funil de vendas e classificação de leads com LLM.
