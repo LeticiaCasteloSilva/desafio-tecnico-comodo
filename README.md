@@ -315,3 +315,217 @@ Já `cmp_001` e `cmp_002` são as campanhas de público frio: caras por venda, m
 delas que sai a demanda que `cmp_004` colhe depois. Como a atribuição é de último
 clique, o retorno delas está sistematicamente subestimado nestes números — cortá-las
 com base nesta tabela seria decidir a partir de um viés conhecido.
+
+---
+
+## Parte 3 | Classificação de leads com LLM
+
+```bash
+.venv/bin/python parte3_classificacao/classificar.py
+.venv/bin/python parte3_classificacao/classificar.py --conversa CV001   # uma só
+```
+
+Lê as 15 conversas, chama o modelo uma vez por conversa e grava uma linha JSON
+por conversa em `saida/classificacoes.jsonl`. Modelo: `gpt-4.1`, temperatura 0.
+
+O prompt está em
+[`prompts/classificacao.md`](parte3_classificacao/prompts/classificacao.md),
+fora do código, com seções `## sistema` e `## usuario`. Versionado em arquivo
+próprio porque mudança de critério muda a distribuição das classificações: ao ver
+a proporção de `quente` variar, é o histórico do Git que permite saber se o funil
+mudou ou se o prompt mudou.
+
+### Resultado
+
+15 conversas classificadas, nenhuma falha, cerca de 30 segundos.
+
+| Classe | Qtd | Conversas |
+|---|---:|---|
+| quente | 6 | CV001, CV008, CV009, CV011, CV013, CV015 |
+| morno | 2 | CV003, CV006 |
+| frio | 5 | CV002, CV007, CV010, CV012, CV014 |
+| fora_do_perfil | 2 | CV004, CV005 |
+
+Exemplo de saída (CV015):
+
+```json
+{
+  "conversa_id": "CV015",
+  "classificacao": "quente",
+  "prioridade": 1,
+  "confianca": "alta",
+  "sinais": ["comprei 3 apartamentos",
+             "entrega das chaves foi mes passado",
+             "150 mil pros tres",
+             "amanha as 10"],
+  "orcamento_mencionado": 150000.0,
+  "prazo_mencionado": null,
+  "ambientes": ["dormitorio"],
+  "proxima_acao": "Agendar videochamada para amanhã às 10",
+  "resumo_para_o_vendedor": "Três apartamentos comprados para investimento, chaves entregues mês passado, orçamento de R$ 150 mil. Videochamada agendada para amanhã às 10.",
+  "status": "ok",
+  "campanha_id": "cmp_006"
+}
+```
+
+### Escolha do modelo
+
+`gpt-4.1`, com `temperature=0`. Testei também `gpt-4o`, `gpt-5.6-terra` e
+`gpt-5.6-sol`, medindo quantas das 15 conversas saem iguais em execuções
+repetidas — classificação que muda sozinha não serve para ordenar fila de
+vendedor. O `gpt-4.1` foi o único com as 15 estáveis em três execuções.
+
+Duas descobertas do teste valem registro. A família `gpt-5.x` **não aceita
+`temperature=0`** (rejeita com HTTP 400, só permite o padrão 1), o que a torna
+menos estável nesta tarefa: no `gpt-5.6-terra`, uma conversa oscilou entre
+`quente` e `morno` entre execuções — mudança de classe altera o que o vendedor
+faz. E o `gpt-5.6-sol`, modelo de raciocínio, levou mais de 10 minutos onde os
+outros levam menos de um, inviável para volume sem paralelização.
+
+O script envia `temperature` apenas aos modelos que a aceitam, o que permite
+trocar de modelo sem editar a chamada.
+
+Uma ressalva sobre o método, porque é fácil errar aqui: `temperature=0` reduz a
+variação mas **não garante determinismo**. As duas primeiras execuções deram
+resultado idêntico e eu tratei isso como reprodutibilidade — só na terceira, e
+comparando modelos, a variação apareceu. Medir estabilidade exige mais de duas
+amostras.
+
+### Critérios de classificação
+
+O prompt avalia cinco fatores objetivos: **imóvel disponível**, **orçamento
+declarado**, **prazo definido**, **informação técnica** (planta, metragem) e
+**aceite de avanço** (visita, medição, reunião). A classe sai da contagem, não de
+uma descrição em prosa — isso reduz a margem de interpretação e torna auditável
+por que um lead caiu numa classe.
+
+Quatro decisões moldaram esses critérios, e as três primeiras vieram de erros
+observados nos resultados:
+
+**Desqualificação acontece antes da contagem.** Numa versão anterior, o piso de
+R$ 12.000 era uma cláusula dentro dos critérios de classe, e a contagem o
+atropelava: um lead com imóvel, metragem e orçamento de R$ 8 mil era classificado
+como frio em vez de fora do perfil. Hoje a checagem de desqualificação é um passo
+que encerra a análise.
+
+**Orçamento declarado é obrigatório para `quente`.** É o que separa projeto real
+de intenção. Sem essa regra, um lead com projeto grande mas sem valor definido
+ocupava o horário mais caro do time. A ausência de orçamento impede a promoção a
+quente, mas nunca rebaixa para frio — precisou ficar explícito, porque a
+classificação de uma conversa oscilava entre morno e frio justamente aí.
+
+**P1 é escasso por definição.** Numa versão anterior, todos os leads quentes
+receberam P1 — uma fila em que tudo é urgente não ordena nada. P1 hoje exige
+gatilho declarado: prazo de até 30 dias, decisão na semana, concorrência com
+data, ou volume excepcional. O resultado atual distribui 2 em P1 e 4 em P2.
+
+**A conversa do lead é entrada não confiável.** As instruções ficam em tags
+nomeadas e a transcrição entra dentro de `<conversa>`, separando o que é
+instrução do que é texto de terceiro — reduz a chance de o modelo tratar o
+conteúdo da conversa como comando.
+
+### Decisões de schema
+
+Além dos campos pedidos no enunciado, incluí quatro:
+
+- **`confianca`** (`alta`/`media`/`baixa`) — separa "este lead é frio" de "esta
+  conversa é curta demais para eu saber". São situações diferentes: a primeira o
+  vendedor descarta, a segunda ele precisa cutucar. Sem esse campo as duas viram
+  `frio` e ficam indistinguíveis. Mede a informação disponível, não a qualidade
+  do lead: um frio com motivo declarado ("estou pesquisando para daqui a 2 anos")
+  é confiança alta. Duas das 15 conversas saíram com confiança baixa;
+- **`orcamento_mencionado`** e **`prazo_mencionado`** — os dois dados que mais
+  pesam na priorização de um ticket de R$ 15 a 75 mil. Em campo próprio, dão
+  filtro e ordenação sem precisar reler o resumo. Numa faixa ("12 a 15 mil"), o
+  prompt registra o limite inferior: a decisão de atendimento usa o pior caso;
+- **`ambientes`** — permite rotear para o especialista certo e dimensionar a
+  proposta antes do primeiro contato;
+- **`status`** (`ok`/`erro`) — distingue classificação real de registro produzido
+  por falha, o que torna o arquivo reprocessável.
+
+### Garantia de JSON válido
+
+O enunciado exige JSON válido em todos os casos. São quatro camadas: a chamada
+usa `response_format={"type": "json_object"}`; se ainda assim vier texto em volta
+ou bloco markdown, o parser extrai o objeto; todo campo passa por normalização
+(classe fora do vocabulário vira `frio`, prioridade não-numérica vira 5, `sinais`
+que veio como string vira lista vazia, e o `conversa_id` é sempre reescrito a
+partir da entrada em vez do eco do modelo); e se as 3 tentativas falharem, sai um
+registro completo com `status: "erro"` e o motivo, no mesmo schema — quem consome
+o arquivo tem um caminho de leitura só.
+
+Cada camada foi verificada com entrada correspondente. O tratamento de falha, em
+particular, foi testado em condição real duas vezes: a primeira execução ocorreu
+com a conta sem créditos (429), e depois um teste com `gpt-5.6` foi rejeitado por
+causa da temperatura (400). Nos dois casos saíram 15 JSONs válidos com o motivo
+preservado, sem exceção levantada — foi assim que diagnostiquei o segundo
+problema em segundos.
+
+### Como avaliar a qualidade em produção
+
+> *Como você saberia, daqui a três meses e com 4.000 conversas processadas, se
+> essa classificação está funcionando bem ou não?*
+
+O erro seria medir "acurácia" contra um gabarito, porque não existe gabarito: a
+classificação certa é a que faz o vendedor ganhar dinheiro. Três frentes:
+
+**1. Contra o desfecho real (a única medida que importa).** Cada conversa tem um
+lead, e cada lead tem uma etapa no funil. Passados os meses, dá para cruzar a
+classificação com o que aconteceu de fato. A pergunta é se a classificação
+ordena: a taxa de conversão dos `quente` precisa ser consistentemente maior que a
+dos `morno`, e a destes maior que a dos `frio`.
+
+O número que eu acompanharia é a **taxa de conversão por classe, medida
+mensalmente**. Com os dados atuais como referência, `quente` deveria converter
+acima de 30% e `frio` abaixo de 5%. Se as faixas se aproximarem, a classificação
+parou de discriminar e virou ruído — mesmo que "pareça" certa em leitura manual.
+
+Duas medidas complementares:
+
+- **Vendas perdidas em `frio`** — receita fechada por leads classificados como
+  frio ou fora do perfil. É o custo real dos falsos negativos, em reais. Se
+  passar de 5% da receita do mês, o prompt está descartando gente que compra;
+- **Ocupação indevida em `quente`** — proporção de leads quentes que morrem sem
+  chegar a proposta. Mede o desperdício do horário mais caro do time.
+
+**2. Contra o julgamento humano (amostral).** Toda semana, 20 conversas sorteadas
+são reclassificadas por um vendedor, sem ver a saída do modelo. Compara-se a
+concordância. É trabalhoso, então funciona por amostra — mas é o que detecta erro
+sistemático antes do desfecho aparecer, que leva semanas.
+
+Aqui vale medir separadamente a concordância nos casos de **confiança baixa**: se
+o modelo acerta quando diz que tem certeza e erra quando diz que não tem, o campo
+está calibrado e dá para automatizar a triagem só nos de confiança alta.
+
+**3. Estabilidade da distribuição.** As proporções de cada classe, semana a
+semana. Um salto sem mudança correspondente no mix de campanhas indica que algo
+mudou no sistema, não no mercado — atualização do modelo pela OpenAI, mudança no
+prompt, ou mudança no comportamento dos atendentes.
+
+**O que dispararia alerta:**
+
+| Sinal | Limiar | Por quê |
+|---|---|---|
+| Conversão de `quente` cai | Abaixo de 20% por 2 semanas | A classe perdeu poder de discriminação |
+| Receita vinda de `frio`/`fora_do_perfil` | Acima de 5% do mês | Falsos negativos custando dinheiro |
+| Distribuição de uma classe muda | Mais de 10 pontos percentuais vs. média de 4 semanas | Mudança no sistema, não no mercado |
+| Confiança baixa | Acima de 25% das conversas | Conversas chegando curtas demais, ou prompt inadequado ao que mudou |
+| Falhas de chamada | Acima de 2% no dia | Problema de integração |
+| Concordância com o vendedor | Abaixo de 70% na amostra semanal | Critério desalinhado do time |
+
+**O que eu construiria primeiro.** Com 4.000 conversas, nada disso funciona sem
+guardar o histórico: cada classificação precisa registrar a versão do prompt, o
+modelo e a data. Sem isso, é impossível saber se a métrica piorou porque o prompt
+mudou ou porque o mercado mudou — e essa é a primeira pergunta que alguém faz
+quando o número cai. É a razão de o prompt já estar versionado em arquivo próprio
+desde a primeira versão.
+
+### O que ficou de fora
+
+- **Processamento paralelo.** As 15 conversas rodam em sequência, cerca de 30 segundos.
+  Para 4.000, seria necessário paralelizar com controle de rate limit;
+- **Persistência do histórico de classificações.** O arquivo é sobrescrito a cada
+  execução. O plano de avaliação acima depende de guardar versão do prompt e
+  modelo por classificação, o que pede um banco;
+- **Cache por conversa.** Reprocessar as 15 refaz todas as chamadas. Com volume
+  maior, valeria pular conversas já classificadas cujo texto não mudou.
