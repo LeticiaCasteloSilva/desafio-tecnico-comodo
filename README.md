@@ -7,6 +7,10 @@ sobre um funil de vendas e classificação de leads com LLM.
 
 ```
 parte1_ingestao/     coleta de repositórios da API do GitHub
+parte2_sql/          queries sobre o funil, mais o script que as executa
+parte3_classificacao/
+  prompts/           o prompt, versionado fora do código
+  classificar.py     chama o LLM e valida a saída
 dados/               CSVs e JSON fornecidos com o case (partes 2 e 3)
 saida/               artefatos gerados pelos scripts (fora do versionamento)
 ```
@@ -529,3 +533,77 @@ desde a primeira versão.
   modelo por classificação, o que pede um banco;
 - **Cache por conversa.** Reprocessar as 15 refaz todas as chamadas. Com volume
   maior, valeria pular conversas já classificadas cujo texto não mudou.
+
+---
+
+## Uso de IA
+
+Usei Claude (via Claude Code) durante toda a implementação, em modo de trabalho
+conversacional: eu definia o objetivo e as restrições, o modelo propunha código e
+texto, e eu revisava, questionava e rejeitava o que não servia.
+
+**Onde a IA ajudou mais.** Escrever o código  da Parte 1 (retry,
+backoff, escrita atômica) a partir do contexto de operação que o enunciado
+descreve; montar a estrutura das queries da Parte 2; e produzir a primeira versão
+do prompt da Parte 3, que depois passou por várias iterações.
+
+**O que eu revisei e mudei.** Esta é a parte que importa:
+
+- **Números conferidos por fora.** Todos os resultados da Parte 2 foram
+  recalculados com um script independente em Python puro, sem SQL, partindo dos
+  CSVs. Foi essa checagem que revelou a discrepância de 48 vendas atribuídas
+  contra 49 no arquivo, rastreada até a venda VD510 de um lead sem campanha;
+- **Uma afirmação estatística que estava errada.** Uma versão do README dizia que
+  diferenças de ticket médio abaixo de ~15% não eram distinguíveis de ruído. Ao
+  calcular o intervalo de confiança, a margem real era de ±24% a ±67% conforme a
+  campanha. O número tinha sido escrito por estimativa, não por cálculo;
+- **Uma conclusão de negócio incorreta.** Uma versão anterior agrupava `cmp_001`
+  e `cmp_005` como campanhas que "criam demanda nova". `cmp_005` é busca genérica
+  no Google — captura intenção existente, não cria demanda. Isso mudava a
+  recomendação de verba;
+- **A classificação da Parte 3, caso a caso.** Li as 15 conversas antes de
+  aceitar qualquer resultado. Foi assim que encontrei os leads com orçamento
+  abaixo do piso classificados como morno, e a conversa que oscilava entre frio e
+  morno entre execuções — as duas correções estão descritas na Parte 3;
+- **Escopo.** Rejeitei sugestões que aumentariam a entrega sem melhorá-la. 
+
+**Onde a IA errou e eu tive que corrigir o método, não só o resultado.** Ao medir
+a estabilidade da classificação, duas execuções deram resultado idêntico e isso
+foi apresentado como reprodutibilidade garantida. Não é: `temperature=0` reduz a
+variação mas não a elimina, e a terceira execução mostrou variação. Duas amostras
+não medem estabilidade.
+
+---
+
+## Escopo
+
+O case diz que decidir o que cabe faz parte do trabalho. As três partes foram
+entregues completas, com todos os requisitos explícitos atendidos. O que ficou de
+fora foi escolhido, e cada parte tem sua própria seção *O que ficou de fora* com
+a justificativa.
+
+**O padrão dessas escolhas** é o mesmo nas três: implementei o que o enunciado
+pede e o que o contexto de operação exige, e deixei de fora o que só se
+justificaria em produção real — persistência em banco, paralelização,
+alertas ativos, política de retenção. Em cada caso o README diz o que faria
+diferente com volume e permanência reais.
+
+**O que eu faria com mais tempo**, em ordem de valor:
+
+1. **Registrar versão do prompt e do modelo em cada classificação.** É o
+   pré-requisito de todo o plano de avaliação da Parte 3, e hoje não existe. Sem
+   isso, é impossível saber se uma métrica piorou porque o prompt mudou ou porque
+   o mercado mudou;
+2. **Um conjunto de conversas com classificação de referência**, feito por quem
+   conhece o negócio, para medir mudanças de prompt contra algo estável em vez de
+   comparar execuções entre si;
+3. **Paralelizar a Parte 3 com controle de rate limit**, que é o que separa 15
+   conversas de 4.000.
+
+**O que eu não faria**, mesmo com tempo: extrair uma camada compartilhada entre
+os scripts. As Partes 1 e 3 repetem coisas — carregar o `.env`, configurar o log,
+gravar de forma atômica — e a tentação é criar um módulo comum. Mas são entregas
+independentes, que rodam em momentos diferentes e podem evoluir para lugares
+diferentes; acoplá-las agora criaria dependência entre partes que hoje falham
+sozinhas. Repetir trinta linhas custa menos que um módulo que ambos os scripts
+precisam respeitar.
